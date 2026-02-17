@@ -7,7 +7,6 @@ import requests
 
 app=flask.Flask(__name__)
 
-
 dotenv.load_dotenv()
 if dotenv.dotenv_values("DATA_BASE")=="LOCAL":
     import local_DB as DB
@@ -15,8 +14,6 @@ else:
     print("Cloud Database")
 
 url="http://127.0.0.1:5000"
-
-
 
 @app.route('/')
 def main():
@@ -36,12 +33,18 @@ def new_ui():
         print(flask.request)
         data=flask.request.form
         try:
-            user_exists = DB.searchCustomer(data['username'])
-            if user_exists:
-                flask.flash(f"El usuario '{data['username']}' ya está registrado.", "danger")
-                return flask.redirect("/new")
-            DB.newCustomer(Customer(**data))
-            message="customer succesfully added"
+            #user_exists = DB.searchCustomer(data['username'])
+            #if user_exists:
+            #    flask.flash(f"El usuario '{data['username']}' ya está registrado.", "danger")
+            #    return flask.redirect("/new")
+            #DB.newCustomer(Customer(**data))
+            response=requests.post(url=f"{url}/customer",json=data)
+            if response.status_code==200 or response.status_code==201 :
+                message="customer succesfully added"
+            elif response.status_code==409:
+                message="username already exists"
+            else:
+                message=f"error: {response}"
         except Exception as ex:
             message=f"An error ocured:{ex}"
         return flask.render_template("new.html",response=message)
@@ -54,8 +57,9 @@ def search_ui():
         print(flask.request)
         data=flask.request.form
         try:
-            user_exists = DB.searchCustomer(data['username'])
-            message=f"fetched user's data:{user_exists.__str__() if user_exists else "user not found"}"
+            user_exists = requests.request(method="GET",url=f"{url}/customers")#DB.searchCustomer(data['username'])
+            #message=f"fetched user's data:{user_exists.__str__() if user_exists else "user not found"}"
+            message=f"fetched user's data:{user_exists.content}"
         except Exception as ex:
             message=f"An error ocured:{ex}"
         return flask.render_template("customer.html",response=message)
@@ -63,13 +67,22 @@ def search_ui():
 
 @app.route("/list")
 def list_ui():
-    response=requests.request(method="GET",url=f"{url}/customers").json()
+    response=requests.get(url=f"{url}/customers").json()
     return flask.render_template("customers.html",context=response)
 
-@app.route("/delete")
-def delte_ui():
+@app.route("/delete", methods=['GET', 'POST'])
+def delete_ui():
+    if flask.request.method=="POST":
+        data=flask.request.form
+        response=requests.delete(f"{url}/customer/{data['id']}")
+        if response.status_code == 200:
+            message="User successfully deleted"
+        else:
+            message = "Error while deleting user"
+        return flask.render_template("delete.html",response=message)
     return flask.render_template("delete.html")
 
+####Customer's API#####
 
 @app.route('/customers')
 def list():
@@ -92,6 +105,9 @@ def search(username):
 def add():
     request=flask.request.get_json()
     try:
+        user_exists = DB.searchCustomer(request["username"])
+        if user_exists:
+            return flask.jsonify({"message":"error:user already exists"}),409
         DB.newCustomer(Customer(**request))
         return flask.jsonify({"message":"customer successfully added to database"}),201
     except Exception as ex:

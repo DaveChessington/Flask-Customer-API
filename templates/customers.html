@@ -15,7 +15,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for customer in context.context %}
+        {% for customer in context %}
         <tr>
             <th scope="row">{{ customer["id"] }}</th>
             <td>{{ customer["first_name"] }} {{ customer["last_name"] }}</td>

@@ -1,0 +1,19 @@
+{%extends "base.html"%}
+{%block content%}
+<form action="/delete" method="post">
+    <h1 class="display-4">Delete user</h1>
+    <h2>you can also access this method using the following resource /customer/<username></h2>
+  <div class="form-group">
+    <label>use id</label>
+    <input type="number" class="form-control" id="id" name="id" aria-describedby="help" placeholder="Enter id">
+    <small id="help" class="form-text text-muted">your user id is unique</small>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+  {% if response %}
+  <div class="mt-4 p-3 border rounded bg-light">
+      <strong>Result:</strong> 
+      <p class="mb-0">{{ response }}</p>
+  </div>
+  {% endif %}
+</form>
+{%endblock%}
