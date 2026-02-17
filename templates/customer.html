@@ -1,0 +1,19 @@
+{%extends "base.html"%}
+{%block content%}
+<form action="/search" method="post">
+    <h1 class="display-4">Search by username</h1>
+    <h2>you can also access this method using the following resource /customer/<username></h2>
+  <div class="form-group">
+    <label>Username</label>
+    <input type="text" class="form-control" id="username" name="username" aria-describedby="help" placeholder="Enter username">
+    <small id="help" class="form-text text-muted">your username is unique</small>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+  {% if response %}
+  <div class="mt-4 p-3 border rounded bg-light">
+      <strong>Result:</strong> 
+      <p class="mb-0">{{ response }}</p>
+  </div>
+  {% endif %}
+</form>
+{%endblock%}

@@ -48,8 +48,17 @@ def new_ui():
 
     return flask.render_template("new.html")
 
-@app.route("/search")
+@app.route("/search",methods=['GET', 'POST'])
 def search_ui():
+    if flask.request.method=="POST":
+        print(flask.request)
+        data=flask.request.form
+        try:
+            user_exists = DB.searchCustomer(data['username'])
+            message=f"fetched user's data:{user_exists.__str__() if user_exists else "user not found"}"
+        except Exception as ex:
+            message=f"An error ocured:{ex}"
+        return flask.render_template("customer.html",response=message)
     return flask.render_template("customer.html")
 
 @app.route("/list")
