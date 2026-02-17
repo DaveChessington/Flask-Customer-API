@@ -1,0 +1,32 @@
+{%extends "base.html"%}
+{%block content%}
+<h1 class="display-4">List of users</h1>
+    <h2>You can also access this method using the following resource /customers</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">id</th>
+            <th scope="col">name</th>
+            <th scope="col">email</th>
+            <th scope="col">phone</th>
+            <th scope="col">address</th>
+            <th scope="col">username</th>
+            <th scope="col">Last session</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for customer in context.context %}
+        <tr>
+            <th scope="row">{{ customer["id"] }}</th>
+            <td>{{ customer["first_name"] }} {{ customer["last_name"] }}</td>
+            <td>{{ customer["email"] }}</td>
+            <td>{{ customer["phone"] }}</td>
+            <td>{{ customer["username"] }}</td>
+            <td>{{ customer["address"] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{%endblock%}
