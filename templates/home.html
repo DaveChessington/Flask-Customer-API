@@ -1,0 +1,17 @@
+{%extends "base.html"%}
+{%block title%}Welcome Page{%endblock%}
+{%block content%}
+  <div class="container d-flex align-items-center justify-content-center vh-100">
+    <div class="text-center p-5 bg-white shadow rounded-3">
+      <h1 class="display-4 fw-bold">Welcome back {{context.username}}!</h1>
+      <p class="lead text-muted mb-4">
+        This is a simple landing page. 
+        It's fully responsive and ready for your custom content.
+      </p>
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a href="#" class="btn btn-primary btn-lg px-4 gap-3">Get Started</a>
+        <a href="#" class="btn btn-outline-secondary btn-lg px-4">Learn More</a>
+      </div>
+    </div>
+  </div>
+{%endblock%}

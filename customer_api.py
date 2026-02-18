@@ -4,8 +4,10 @@ from Customer import Customer
 import json
 import local_DB as DB
 import requests
+import os
 
 app=flask.Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY', 'a_default_dev_key')
 
 dotenv.load_dotenv()
 if dotenv.dotenv_values("DATA_BASE")=="LOCAL":
@@ -19,13 +21,23 @@ url="http://127.0.0.1:5000"
 def main():
     return flask.render_template("index.html")
 
-@app.route("/login")
+@app.route("/login",methods=['GET', 'POST'])
 def login():
+    if flask.request.method=="POST":
+        data = flask.request.form.to_dict()
+        r=requests.post(f"{url}/validate",json=data).json()
+        if r["match"]:
+            return flask.render_template("home.html",context=data)
+        else:
+            flask.flash("Invalid username or password","danger")
+            return flask.redirect("/login")
+
     return flask.render_template("login.html")
 
 @app.route("/home")
 def home():
-    return flask.render_template("home.html")
+    data=flask.request.data
+    return flask.render_template("home.html",context=data)
 
 @app.route("/new",methods=['GET', 'POST'])
 def new_ui():
@@ -187,6 +199,21 @@ def delete(id):
     except Exception as ex:
         return flask.jsonify({"message":f"error:{ex}"}),500
 
+@app.route('/validate',methods=["POST"])
+def validate():
+    data=flask.request.get_json()
+    if not data:
+        return flask.jsonify({"error": "No data provided"}), 400
+    username = data.get("username")
+    password = data.get("plain_password")
+    if not username or not password:
+        return flask.jsonify({"error": "Missing username or password"}), 400
+    customer=DB.searchCustomer(username)
+    if not customer:
+        return flask.jsonify({"match": False}), 404
+    if customer.check_password(password):
+        return flask.jsonify({"match":True}),200
+    return flask.jsonify({"match":False}),401
 
 if __name__=="__main__":
     app.run(debug=True)

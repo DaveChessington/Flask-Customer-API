@@ -1,0 +1,17 @@
+{%extends "base.html"%}
+{%block content%}
+<div class="jumbotron">
+    <h1 class="display-4">Customer API</h1>
+    <p class="lead">This project features a modular RESTful API designed for comprehensive customer management, prioritizing scalability and security</p>
+    <hr class="my-4">
+    <p>Checkout the methods via the UI or the URL</p>
+    <p class="lead">
+        <a class="btn btn-primary btn-lg" href="/new" role="button">add customer</a>
+        <a class="btn btn-primary btn-lg" href="/list" role="button">customer list</a>
+        <a class="btn btn-primary btn-lg" href="/search" role="button">search customer</a>
+        <a class="btn btn-primary btn-lg" href="/update/search" role="button">update customer</a>
+        <a class="btn btn-primary btn-lg" href="/delete" role="button">delete customer</a>
+    </p>
+</div>
+
+{%endblock%}
