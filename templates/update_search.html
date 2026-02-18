@@ -1,0 +1,18 @@
+{%extends "base.html"%}
+{%block content%}
+<h1 class="display-4">Update a user</h1>
+    <h2>You can also access this method using the following resource update/customer/<id></h2>
+
+<label for="customers">Choose a customer:</label>
+<form method="POST" action="/update/search">
+    <select name="id" id="customers">
+        {% for customer in context %}
+            <option value="{{ customer.id }}">
+                {{ customer.username }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+{%endblock%}
+

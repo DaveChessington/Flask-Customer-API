@@ -82,6 +82,43 @@ def delete_ui():
         return flask.render_template("delete.html",response=message)
     return flask.render_template("delete.html")
 
+
+@app.route("/update/search", methods=['GET', 'POST'])  
+def updateSearch():
+    customer_list=requests.get(url=f"{url}/customers").json() 
+    if flask.request.method=="POST":
+        data=flask.request.form.to_dict()
+        r=requests.get(url=f"{url}/customerId/{data['id']}",json=data)
+        if r.status_code==200 or r.status_code==201:
+            message="customer found"
+        else:
+            message=f"error: {r.json()}"
+        return flask.render_template("update_result.html",context={"message":message,"data":r.json()})
+    return flask.render_template("update_search.html",context=customer_list)
+
+
+@app.route("/update/result", methods=['GET', 'POST'])
+def result_update():
+    data=flask.request.form.to_dict()
+    if flask.request.method=="POST":
+        r=requests.put(url=f"{url}/update/customer/{data['id']}",json=flask.request.form)#update customer info
+        if r.status_code==200 or r.status_code==201:
+            message="customer successfully updated"
+        else:            
+            message=f"error: {r.json()}"
+        return flask.render_template("update_result.html",context={"message":message,"data":r.json()})
+    
+    r=requests.get(url=f"{url}/customer/{data['id']}").json()#get customer info
+    #r=DB.searchCustomerById(data['id'])
+    return flask.render_template("update_result.html",
+                                first_name=r["first_name"],
+                                last_name=r["last_name"], 
+                                email=r["email"],
+                                phone=r["phone"],
+                                address=r["address"],
+                                username=r["username"],)
+    
+
 ####Customer's API#####
 
 @app.route('/customers')
@@ -101,6 +138,16 @@ def search(username):
     except Exception as ex:
         return flask.jsonify({"message":f"error:{ex}"}),500
 
+@app.route("/customerId/<int:id>")
+def searchById(id):
+    try:
+        customer = DB.searchCustomerById(id)
+        if customer:
+            return flask.jsonify(customer.to_dict()), 200
+        return flask.jsonify({"message": "User not found"}), 404
+    except Exception as ex:
+        return flask.jsonify({"message":f"error:{ex}"}),500
+
 @app.route('/customer', methods=['POST'])
 def add():
     request=flask.request.get_json()
@@ -113,16 +160,24 @@ def add():
     except Exception as ex:
         return flask.jsonify({"message":f"error:{ex}"}),500
 
-"""
-@app.route('/update/customer/id', methods=['PUT'])
-def update():
-    request=flask.request.get_json()
+@app.route('/update/customer/<int:id>', methods=['PUT'])
+def update(id):
+    data=flask.request.get_json()
     try:
-        DB.newCustomer(Customer(**request))
-        return flask.jsonify({"message":"customer successfully added to database"}),201
+        customer=Customer(
+            first_name=data["first_name"],
+            last_name=data["last_name"],
+            email=data["email"],
+            phone=data["phone"],
+            address=data["address"],
+            username=data["username"],
+            plain_password=data["plain_password"],
+        )
+        customer.encrypt_password()
+        DB.updateCustomer(id,customer)
+        return flask.jsonify({"message":"customer successfully updated"}),201
     except Exception as ex:
             return flask.jsonify({"message":f"error:{ex}"}),500
-"""
 
 @app.route('/customer/<int:id>', methods=['DELETE'])
 def delete(id):

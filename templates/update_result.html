@@ -1,0 +1,54 @@
+{%extends "base.html"%}
+{%block content%}
+<form method="POST" action="/update/result">
+    
+<h1 class="display-4">Update a user</h1>
+    <h2>You can also access this method using the following resource update/customer/<id></h2>
+    
+        <input name="id" value="{{context.data.id}}" hidden>
+
+    <div class="form-group">
+        <label>first name</label>
+        <input type="text" class="form-control" id="first_name" name="first_name" placeholder="first name" value="{{ context.data.first_name or '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>last name</label>
+        <input type="text" class="form-control" id="last_name" name="last_name" placeholder="last name" value="{{ context.data.last_name or '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>email</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="email" value="{{ context.data.email or '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>phone</label>
+        <input type="text" class="form-control" id="phone" name="phone" placeholder="phone" value="{{ context.data.phone or '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>address</label>
+        <input type="text" class="form-control" id="address" name="address" placeholder="address" value="{{ context.data.address or '' }}">
+    </div>
+
+    <div class="form-group">
+        <label>Username</label>
+        <input type="text" class="form-control" id="username" name="username" placeholder="username" value="{{ context.data.username or 'not set' }}">
+    </div>
+
+    <div class="form-group">
+        <label>password</label>
+        <input type="password" class="form-control" id="password" name="plain_password" placeholder="password">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+    {% if response %}
+    <div class="mt-4 p-3 border rounded bg-light">
+        <strong>Result:</strong>
+        <p class="mb-0">{{ response }}</p>
+    </div>
+    {% endif %}
+</form>
+{%endblock%}

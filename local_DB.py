@@ -65,34 +65,35 @@ def newCustomer(customer: Customer):
     ))
     conn.commit()
     conn.close()
-'''
-def updateCustomer(id,customer: Customer):
-    
-    conn=get_connection()
-    cursor=conn.cursor()
-    cursor.execute("""
-        UPDATE customers SET 
-            first_name=?, 
-            last_name=?, 
-            email=?, 
-            phone=?, 
-            address=?, 
-            username=?, 
+
+def updateCustomer(id, customer:Customer):
+    if searchCustomerById(id):
+        conn=get_connection()
+        cursor=conn.cursor()
+        cursor.execute("""
+        UPDATE customers
+        SET first_name=?,
+            last_name=?,
+            email=?,
+            phone=?,
+            address=?,
+            username=?,
             password=?
         WHERE id=?
-    """,(
+        """,(
         customer.first_name, 
         customer.last_name, 
         customer.email,
         customer.phone, 
         customer.address, 
         customer.username,
-        customer.encrypted_password, 
-        customer.id
-    ))
-    conn.commit()
-    conn.close()
-'''
+        customer.encrypted_password,
+        id
+        ))
+        conn.commit()
+        conn.close()
+
+
 
 def searchCustomerById(id:int):
     conn=get_connection()
