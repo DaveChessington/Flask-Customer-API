@@ -30,6 +30,5 @@ Currently, the system works with a **local database**, with support planned for 
 - HTML + Bootstrap
 
 ### Future Improvements
-- AWS RDS integration
+- AWS dynamo db integration and use of lambdas
 - Session management and authentication
-- Deployment to cloud environment
